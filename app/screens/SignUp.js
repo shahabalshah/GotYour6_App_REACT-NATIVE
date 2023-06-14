@@ -46,6 +46,7 @@ export default function SignUp(props) {
   const [isCountryCode, setisCountryCode] = useState(false);
   const [showPicker, setshowPicker] = useState(false)
   const [flag, setflag] = useState('🇬🇧')
+  const [loading, setloading] = useState(false)
 
 
   const showToast = () => {
@@ -82,6 +83,7 @@ export default function SignUp(props) {
   };
   
   const handleLogin = () => {
+    setloading(true)
     if (!crptoName) {
       Toast.show(
         {
@@ -90,6 +92,7 @@ export default function SignUp(props) {
           text2: 'Please Enter your Crypto Name!'
         }
       )
+      setloading(false)
       return;
       }
     if(!PhoneNumber){
@@ -100,6 +103,7 @@ export default function SignUp(props) {
           text2: 'Please Enter your Phone Number!'
         }
       )
+      setloading(false)
       return
     }
     if(!secretKey){
@@ -110,6 +114,7 @@ export default function SignUp(props) {
           text2: 'Please Generate Your SecretKey!'
         }
       )
+      setloading(false)
       return
     }
     if(!isCopied){
@@ -120,6 +125,7 @@ export default function SignUp(props) {
           text2: 'Please Copy & Save your Secret Key!'
         }
       )
+      setloading(false)
       return
     }
     if(!isChecked){
@@ -130,6 +136,7 @@ export default function SignUp(props) {
           text2: 'Please Check the Box to Proceed!'
         }
       )
+      setloading(false)
       return
     }
 
@@ -153,6 +160,7 @@ export default function SignUp(props) {
               text2: 'Invalid Phone Number!'
             }
           )
+          setloading(false)
           return
         }
         else if(res.error.includes('Invalid password')){
@@ -163,6 +171,7 @@ export default function SignUp(props) {
               text2: 'User Already Signed Up!'
             }
           )
+          setloading(false)
           return
         }
         else{
@@ -173,10 +182,12 @@ export default function SignUp(props) {
               text2: 'Something Went Wrong!'
             }
           )
+          setloading(false)
           return
         }
       }
       else if(res.success){
+        setloading(false)
         Toast.show(
           {
             type: 'tomatoToast',
@@ -194,6 +205,7 @@ export default function SignUp(props) {
           text2: 'Something Went Wrong!'
         }
       )
+      setloading(false)
       return
      })
   };
@@ -289,6 +301,7 @@ export default function SignUp(props) {
           </View>
         </View>
         <PrimaryButton
+          loading={loading}
           text={AppStrings.signUp.toUpperCase()}
           customStyles={{marginTop: 0}}
           onPress={() => handleLogin()}

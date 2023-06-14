@@ -15,8 +15,9 @@ export default function ForgotPassword(props) {
   const [CountryCode, setcountryCode] = useState('PK');
   const [PhoneCode, setphoneCode] = useState('+44');
   const [PhoneNumber, setPhoneNumber] = useState('');
-  const [showPicker, setshowPicker] = useState(false)
-  const [flag, setflag] = useState('🇬🇧')
+  const [showPicker, setshowPicker] = useState(false);
+  const [flag, setflag] = useState('🇬🇧');
+  const [loading, setloading] = useState(false);
 
   const ToasterSuccess = (text1, text2) => {
     Toast.show({
@@ -35,28 +36,37 @@ export default function ForgotPassword(props) {
   };
 
   const requestOTP = () => {
+    setloading(true);
     if (!PhoneNumber) {
       Toast.show({
         type: 'errorToast',
         text1: 'Error!',
         text2: 'Enter your phone number!',
       });
+      setloading(false);
       return;
     }
 
     postData('/forgotPassword/otp', {phonenumber: PhoneNumber})
       .then(res => {
         console.log('res', res);
+        if(res.message && res.success==false){
+          ToasterError('Error',res.message)
+          setloading(false)
+        }
         if (res.error) {
           if (res.error.includes('is not a valid phone number')) {
             ToasterError('Error', 'Invalid Phone Number!');
+            setloading(false);
             return;
           } else {
             ToasterError('Error', 'Something Went Wrong!');
+            setloading(false);
             return;
           }
         } else if (res.success) {
           ToasterSuccess('Success', res.message);
+          setloading(false);
           props.navigation.navigate('Verification', {
             PhoneNumber: PhoneNumber,
             phoneCode: PhoneCode,
@@ -64,7 +74,10 @@ export default function ForgotPassword(props) {
           });
         }
       })
-      .catch(error => console.log('error in forgot password', error));
+      .catch(error => {
+        console.log('error in forgot password', error);
+        setloading(false);
+      });
   };
   return (
     <SafeView>
@@ -83,13 +96,14 @@ export default function ForgotPassword(props) {
           customStyles={styles.text}
         />
         <PhoneNumTextInput
-          onPressCode={()=>setshowPicker(true)}
+          onPressCode={() => setshowPicker(true)}
           countryFlag={flag}
           onChangeText={val => setPhoneNumber(val)}
           phoneCode={PhoneCode}
           customStyles={{marginBottom: 0}}
         />
         <PrimaryButton
+          loading={loading}
           text={'Send OTP'}
           onPress={() => {
             requestOTP();
@@ -102,7 +116,7 @@ export default function ForgotPassword(props) {
             setshowPicker(false);
             setflag(item.flag);
           }}
-          style={{modal:{height:WINDOW_HEIGHT*0.45}}}
+          style={{modal: {height: WINDOW_HEIGHT * 0.45}}}
         />
       </View>
     </SafeView>

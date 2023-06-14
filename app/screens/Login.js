@@ -37,6 +37,7 @@ export default function Login(props) {
   const [isCountryCode, setisCountryCode] = useState(false);
   const [showPicker, setshowPicker] = useState(false);
   const [flag, setflag] = useState('🇬🇧');
+  const [loading, setloading] = useState(false);
 
   const ToasterSuccess = (text1, text2) => {
     Toast.show({
@@ -55,12 +56,15 @@ export default function Login(props) {
   };
 
   const handleLogin = () => {
+    setloading(true);
     if (!phoneNumber) {
       ToasterError('Error', 'Please enter your Phone Number!');
+      setloading(false);
       return;
     }
     if (!password) {
       ToasterError('Error', 'Please enter your SecretKey!');
+      setloading(false);
       return;
     }
     let payload = {
@@ -68,23 +72,37 @@ export default function Login(props) {
       phonenumber: phoneNumber,
       safeKey: password,
     };
-    postData(APP_URL.login, payload).then(res => {
-      if (res.error) {
-        if (res.error.includes('is not a valid phone number')) {
-          ToasterError('Error', 'Invalid Phone Number!');
-          return;
-        } else {
-          ToasterError('Error', 'Something Went Wrong!');
-          return;
+    postData(APP_URL.login, payload)
+      .then(res => {
+        if (res.error) {
+          if (res.error.includes('is not a valid phone number')) {
+            ToasterError('Error', 'Invalid Phone Number!');
+            setloading(false);
+            return;
+          }
+          else if(res.error.includes('Invalid password')){
+            ToasterError('Error', 'Invalid Secretkey!');
+            setloading(false)
+          }
+          else {
+            ToasterError('Error', 'Something Went Wrong!');
+            setloading(false);
+            return;
+          }
+        } else if (res.success) {
+          ToasterSuccess('Success', res.message);
+          setloading(false);
+          props.navigation.navigate('Verification', {
+            PhoneNumber: phoneNumber,
+            phoneCode: phoneCode,
+          });
         }
-      } else if (res.success) {
-        ToasterSuccess('Success', res.message);
-        props.navigation.navigate('Verification', {
-          PhoneNumber: phoneNumber,
-          phoneCode: phoneCode,
-        });
-      }
-    });
+        setloading(false)
+      })
+      .catch(error => {
+        ToasterError('Error', 'Something went wrong!');
+        setloading(false);
+      });
   };
 
   return (
@@ -127,6 +145,7 @@ export default function Login(props) {
         <PrimaryButton
           text={AppStrings.login.toUpperCase()}
           onPress={() => handleLogin()}
+          loading={loading}
         />
         <PrimaryText
           customStyles={styles.text}
@@ -159,7 +178,7 @@ export default function Login(props) {
             setshowPicker(false);
             setflag(item.flag);
           }}
-          style={{modal:{height:WINDOW_HEIGHT*0.4}}}
+          style={{modal: {height: WINDOW_HEIGHT * 0.4}}}
         />
       </ScrollView>
     </SafeView>

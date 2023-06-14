@@ -22,7 +22,7 @@ export default function PasswordTextInput({onChangeText}) {
   return (
     <View style={styles.container}>
       <PrimaryText
-        text={AppStrings.password}
+        text={'Secret Key'}
         customStyles={{
           fontSize: FontSize.small,
           marginTop: 5,

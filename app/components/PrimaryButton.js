@@ -9,7 +9,8 @@ import {
   MAIN_CARDWIDTH,
   WINDOW_HEIGHT,
 } from '../utilities/Globals';
-import {AppStrings} from '../utilities/AppStrings';
+import Lottie from 'lottie-react-native';
+import { LOADING } from '../assets/LottieAnimations';
 
 export default function PrimaryButton({
   text,
@@ -18,8 +19,11 @@ export default function PrimaryButton({
   topGradientColor,
   bottomGradientColor,
   customTextStyle,
+  loading
 }) {
   return (
+    <>
+    {!loading?
     <TouchableOpacity onPress={onPress}>
       <LinearGradient
         colors={[
@@ -39,7 +43,17 @@ export default function PrimaryButton({
           ]}
         />
       </LinearGradient>
-    </TouchableOpacity>
+    </TouchableOpacity>:
+    <View style={[styles.linearGradient,customStyles,{backgroundColor:AppColors.blackLight}]}>
+      <Lottie
+          source={LOADING}
+          autoPlay
+          loop
+          style={{width: 100, height: 100}}
+        />
+    </View>
+    }
+    </>
   );
 }
 
