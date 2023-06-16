@@ -20,7 +20,6 @@ import {
 } from '../utilities/Globals';
 import PrimaryText from '../components/PrimaryText';
 import PhoneNumTextInput from '../components/PhoneNumTextInput';
-import PasswordTextInput from '../components/PasswordTextInput';
 import PrimaryButton from '../components/PrimaryButton';
 import SocialButtons from '../components/SocialButtons';
 import SecondaryInput from '../components/SecondaryInput';
@@ -31,6 +30,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import Toast from 'react-native-toast-message';
 import { postData } from '../utilities/ApiCalls';
 import {CountryPicker} from 'react-native-country-codes-picker';
+import { AppFonts } from '../utilities/Globals';
+import Header from '../components/Header';
 
 export default function SignUp(props) {
   const [isChecked, setIsChecked] = useState(false);
@@ -336,7 +337,16 @@ export default function SignUp(props) {
             setshowPicker(false);
             setflag(item.flag);
           }}
-          style={{modal:{height:WINDOW_HEIGHT*0.45}}}
+          style={{
+            modal: {height: WINDOW_HEIGHT * 0.45},
+            countryName: {color: AppColors.black, fontFamily: AppFonts.regular},
+            dialCode: {color: AppColors.black, fontFamily: AppFonts.regular},
+            searchMessageText: {
+              color: AppColors.black,
+              fontFamily: AppFonts.regular,
+            },
+            textInput: {color: AppColors.black, fontFamily: AppFonts.regular},
+          }}
         />
       </ScrollView>
     </SafeView>

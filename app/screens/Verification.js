@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, {useRef, useState, useContext} from 'react';
+import React, {useRef, useState, useContext, useEffect} from 'react';
 import SafeView from '../components/SafeView';
 import {
   AppColors,
@@ -30,14 +30,20 @@ import AppContext from '../utilities/AppContext';
 export default function Verification(props) {
   console.log('props', props);
   const {setUserData} = useContext(AppContext);
+  const [loading, setloading] = useState(false);
   const [otp, setOtp] = useState('');
   let otpInput = useRef(null);
+
   const clearText = () => {
     otpInput.current.clear();
   };
-  const setText = () => {
-    otpInput.current.setValue('1234');
-  };
+
+  useEffect(() => {
+    return () => {
+      clearText()
+    };
+  }, []);
+
   const onVerify = async () => {
     console.log('verifying');
     if (otp.length < 6) {
@@ -48,6 +54,7 @@ export default function Verification(props) {
       });
       return;
     }
+    setloading(true);
     postData('/otpVerify', {otp: otp})
       .then(res => {
         console.log('response after otp', res);
@@ -57,6 +64,7 @@ export default function Verification(props) {
             text1: 'Error!',
             text2: res.error,
           });
+          setloading(false);
           return;
         } else if (res.user.success) {
           setUserData(res.user.data);
@@ -65,8 +73,9 @@ export default function Verification(props) {
             text1: 'Success!',
             text2: res.message,
           });
+          setloading(false);
           if (props?.route?.params?.screen == 'forgot') {
-            props.navigation.navigate('ResetKey',{otp:otp})
+            props.navigation.replace('ResetKey', {otp: otp});
           } else {
             props.navigation.navigate('ConnectWatch');
           }
@@ -78,6 +87,7 @@ export default function Verification(props) {
           text1: 'Error!',
           text2: 'Something Went Wrong!',
         });
+        setloading(false);
         return;
       });
   };
@@ -100,7 +110,7 @@ export default function Verification(props) {
             We have sent the verification code to your phone number
             <Text style={styles.textMobileNum}>
               {' '}
-              +{props?.route?.params?.phoneCode}
+              {props?.route?.params?.phoneCode}
               {props?.route?.params?.PhoneNumber}
             </Text>
           </Text>
@@ -110,6 +120,7 @@ export default function Verification(props) {
         </TouchableOpacity>
         <View style={{width: WINDOW_WIDTH, alignItems: 'center'}}>
           <OTPTextInput
+            ref={e => (otpInput = e)}
             tintColor={AppColors.blackExtraLight}
             offTintColor={AppColors.blackExtraLight}
             inputCount={6}
@@ -121,6 +132,7 @@ export default function Verification(props) {
         <PrimaryButton
           text={AppStrings.verify.toLocaleUpperCase()}
           onPress={() => onVerify()}
+          loading={loading}
         />
         <PrimaryText text={AppStrings.didntGotCode} />
         <MediumText

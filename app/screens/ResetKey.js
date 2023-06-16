@@ -8,12 +8,13 @@ import SecondaryInput from '../components/SecondaryInput';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PrimaryButton from '../components/PrimaryButton';
 import Toast from 'react-native-toast-message';
-import { postData } from '../utilities/ApiCalls';
+import {postData} from '../utilities/ApiCalls';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 export default function ResetKey(props) {
   const [secretKey, setsecretKey] = useState('');
   const [isCopied, setIsCopied] = useState(false);
+  const [loading, setloading] = useState(false);
 
   const showToast = () => {
     Toast.show({
@@ -66,37 +67,43 @@ export default function ResetKey(props) {
       });
       return;
     }
-    let cont='39'
-    cont
-    let payload={
-        // otp:props?.route?.params?.otp,
-        password:secretKey,
-        confirmpassword:secretKey,
-    }
-    console.log('payload', payload)
-    postData('/resetPassword/otp',payload).then(res=>{
-        if(res.success){
-            Toast.show({
-                type: 'tomatoToast',
-                text1: 'Success!',
-                text2: 'Secret Key Changed Successfully!',
-              });
-              props.navigation.replace('Login')
-        }
-        else if(!res.success){
-            Toast.show({
-                type: 'errorToast',
-                text1: 'Error!',
-                text2: res.message,
-              });
-        }
-    }).catch(()=>{
-        Toast.show({
+    let payload = {
+      // otp:props?.route?.params?.otp,
+      password: secretKey,
+      confirmpassword: secretKey,
+    };
+    setloading(true);
+    console.log('payload', payload);
+    postData('/resetPassword/otp', payload)
+      .then(res => {
+        if (res.success) {
+          Toast.show({
+            type: 'tomatoToast',
+            text1: 'Success!',
+            text2: 'Secret Key Changed Successfully!',
+          });
+          props.navigation.replace('Login');
+          setloading(false);
+          return;
+        } else if (!res.success) {
+          Toast.show({
             type: 'errorToast',
             text1: 'Error!',
-            text2: 'Something went wrong!',
+            text2: res.message,
           });
-    })
+          setloading(false);
+          return;
+        }
+      })
+      .catch(() => {
+        Toast.show({
+          type: 'errorToast',
+          text1: 'Error!',
+          text2: 'Something went wrong!',
+        });
+        setloading(false);
+        return;
+      });
   };
 
   return (
@@ -111,7 +118,7 @@ export default function ResetKey(props) {
         </View>
         <PrimaryText
           text={
-            'Enter your Phone Number to receive OTP\ncode to reset your password.'
+            'Generate a new SafeKey below.'
           }
           customStyles={styles.text}
         />
@@ -132,7 +139,11 @@ export default function ResetKey(props) {
           }}
           value={secretKey}
         />
-        <PrimaryButton text={'CONTINUE'} onPress={()=>handleChangeKey()}/>
+        <PrimaryButton
+          text={'CONTINUE'}
+          onPress={() => handleChangeKey()}
+          loading={loading}
+        />
       </View>
     </SafeView>
   );

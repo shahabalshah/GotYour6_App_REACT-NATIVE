@@ -21,7 +21,7 @@ import AppContext from '../utilities/AppContext';
 import TcpSocket from 'react-native-tcp-socket';
 import PrimaryText from '../components/PrimaryText';
 import {ActivityIndicator} from '@react-native-material/core';
-import { LOCATING } from '../assets/LottieAnimations';
+import {LOCATING} from '../assets/LottieAnimations';
 import Lottie from 'lottie-react-native';
 
 const connectionData = '[3G*7703762021*0009*LK,0,0,77]';
@@ -38,8 +38,8 @@ let newCRCounter = 0;
 export default function Home(props) {
   let timeOutOne;
   let timeOutTwo;
-  const {DeviceId,UserData} = useContext(AppContext);
-  console.log('UserData', UserData)
+  const {DeviceId, UserData} = useContext(AppContext);
+  console.log('UserData', UserData);
   const [batteryLevel, setbatteryLevel] = useState(0);
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -147,9 +147,14 @@ export default function Home(props) {
           if (data.toString().includes('LK')) {
             setLK(true);
             setbatteryLevel(formatConnectionResponse(data.toString()));
-          } else if (data.toString().includes('UD_LTE')) {
+          } else if (
+            data.toString().includes('UD_LTE') ||
+            data.toString().includes('UD_WCDMA') ||
+            data.toString().includes('UD_TDSCDMA') ||
+            data.toString().includes('WCDMA') ||
+            data.toString().includes('TDSCDMA')
+          ) {
             newCRCounter = newCRCounter + 1;
-
             if (newCRCounter === 3) {
               sendCommandAfterDelay(client, `[3G*${DeviceId}*0002*CR]`);
             }
@@ -191,8 +196,6 @@ export default function Home(props) {
     // Connect to the TCP socket
     connectToSocket()
       .then(() => {
-        // Start sending commands after the connection is established
-
         sendLKCommand(client, `[3G*${DeviceId}*0002*LK]`);
       })
       .catch(error => {
@@ -247,7 +250,7 @@ export default function Home(props) {
               justifyContent: 'center',
               flexDirection: 'row',
             }}>
-            <Lottie source={LOCATING} autoPlay loop/>
+            <Lottie source={LOCATING} autoPlay loop />
           </View>
         )
       ) : (
@@ -279,7 +282,10 @@ export default function Home(props) {
         <HomeFloatingIcon source={MONITOR_ICON_HOME} text={'Health\nMonitor'} />
         <HomeFloatingIcon source={MONITOR_ICON_HOME} text={'Air\nQuality'} />
       </View>
-      <DetailsBubble userName={UserData.name} batteryLevel={batteryLevel + '%'} />
+      <DetailsBubble
+        userName={UserData.name}
+        batteryLevel={batteryLevel + '%'}
+      />
     </SafeView>
   );
 }

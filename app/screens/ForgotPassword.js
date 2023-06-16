@@ -1,7 +1,13 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import SafeView from '../components/SafeView';
-import {AppColors, WINDOW_HEIGHT, WINDOW_WIDTH} from '../utilities/Globals';
+import {
+  AppColors,
+  AppFonts,
+  MAIN_CARDWIDTH,
+  WINDOW_HEIGHT,
+  WINDOW_WIDTH,
+} from '../utilities/Globals';
 import Header from '../components/Header';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PrimaryText from '../components/PrimaryText';
@@ -12,7 +18,6 @@ import {postData} from '../utilities/ApiCalls';
 import {CountryPicker} from 'react-native-country-codes-picker';
 
 export default function ForgotPassword(props) {
-  const [CountryCode, setcountryCode] = useState('PK');
   const [PhoneCode, setphoneCode] = useState('+44');
   const [PhoneNumber, setPhoneNumber] = useState('');
   const [showPicker, setshowPicker] = useState(false);
@@ -50,9 +55,9 @@ export default function ForgotPassword(props) {
     postData('/forgotPassword/otp', {phonenumber: PhoneNumber})
       .then(res => {
         console.log('res', res);
-        if(res.message && res.success==false){
-          ToasterError('Error',res.message)
-          setloading(false)
+        if (res.message && res.success == false) {
+          ToasterError('Error', res.message);
+          setloading(false);
         }
         if (res.error) {
           if (res.error.includes('is not a valid phone number')) {
@@ -116,7 +121,16 @@ export default function ForgotPassword(props) {
             setshowPicker(false);
             setflag(item.flag);
           }}
-          style={{modal: {height: WINDOW_HEIGHT * 0.45}}}
+          style={{
+            modal: {height: WINDOW_HEIGHT * 0.45},
+            countryName: {color: AppColors.black, fontFamily: AppFonts.regular},
+            dialCode: {color: AppColors.black, fontFamily: AppFonts.regular},
+            searchMessageText: {
+              color: AppColors.black,
+              fontFamily: AppFonts.regular,
+            },
+            textInput: {color: AppColors.black, fontFamily: AppFonts.regular},
+          }}
         />
       </View>
     </SafeView>

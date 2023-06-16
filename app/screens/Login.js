@@ -27,6 +27,7 @@ import {postData} from '../utilities/ApiCalls';
 import Toast from 'react-native-toast-message';
 import {APP_URL} from '../utilities/AppUrls';
 import {CountryPicker} from 'react-native-country-codes-picker';
+import { AppFonts } from '../utilities/Globals';
 
 export default function Login(props) {
   const {UserData} = useContext(AppContext);
@@ -178,7 +179,16 @@ export default function Login(props) {
             setshowPicker(false);
             setflag(item.flag);
           }}
-          style={{modal: {height: WINDOW_HEIGHT * 0.4}}}
+          style={{
+            modal: {height: WINDOW_HEIGHT * 0.45},
+            countryName: {color: AppColors.black, fontFamily: AppFonts.regular},
+            dialCode: {color: AppColors.black, fontFamily: AppFonts.regular},
+            searchMessageText: {
+              color: AppColors.black,
+              fontFamily: AppFonts.regular,
+            },
+            textInput: {color: AppColors.black, fontFamily: AppFonts.regular},
+          }}
         />
       </ScrollView>
     </SafeView>
