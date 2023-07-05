@@ -25,40 +25,69 @@ export default function PhoneNumTextInput({
   customStyles,
   customLabelStyle,
   countryFlag,
-  onPressCode
+  onPressCode,
 }) {
+  const [isFocused, setisFocused] = useState(false);
+
   return (
-    <View style={[styles.container, customStyles]}>
+    <View
+      style={[
+        styles.container,
+        {borderColor: isFocused ? AppColors.primary : AppColors.darkBlue},
+        customStyles,
+      ]}>
       <PrimaryText
         text={AppStrings.phoneNumber}
         customStyles={[
           {
             fontSize: FontSize.small,
             marginTop: 5,
-            color: AppColors.primary,
+            color: isFocused ? AppColors.primary : AppColors.darkBlue,
             marginLeft: 5,
             marginBottom: 0,
+            position:'absolute',
+            backgroundColor:'white',
+            paddingHorizontal:10,
+            transform: [
+              {translateY: -WINDOW_HEIGHT * 0.016},
+              {translateX: WINDOW_WIDTH*0.02}
+            ],
           },
           customLabelStyle,
         ]}
       />
-      <TouchableOpacity
-      onPress={onPressCode}
+      <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          borderRightWidth: 0.5,
-          height: WINDOW_HEIGHT * 0.045,
-          borderRightColor: AppColors.blackLight,
-          width: WINDOW_WIDTH * 0.25,
-          justifyContent: 'space-between',
+          width: WINDOW_WIDTH * 0.2,
+          justifyContent: 'center',
+          height:WINDOW_HEIGHT*0.07,
         }}>
-        <Text style={{fontSize:FontSize.big,paddingLeft:3}}></Text>
-        <BoldText text={`${countryFlag}${phoneCode}`} />
-        <Icon name="keyboard-arrow-down" size={16} color={AppColors.black} />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+         }}
+          onPress={onPressCode}>
+          <BoldText text={`${countryFlag}${phoneCode}`} />
+          <Icon name="keyboard-arrow-down" size={16} color={AppColors.black} />
+        </TouchableOpacity>
+        <View
+        style={{borderRightWidth: 0.5,
+          borderRightColor: AppColors.blackLight,height:WINDOW_HEIGHT*0.035,marginLeft:5}}
+        />
+      </View>
       <TextInput
         onChangeText={onChangeText}
+        onFocus={() => {
+          setisFocused(true);
+        }}
+        onBlur={() => {
+          setisFocused(false);
+        }}
         style={{
           marginLeft: 5,
           width: MAIN_CARDWIDTH * 0.65,
@@ -67,9 +96,10 @@ export default function PhoneNumTextInput({
           fontFamily: AppFonts.bold,
           height: WINDOW_HEIGHT * 0.081,
           position: 'absolute',
+          color: AppColors.black,
           transform: [
-            {translateY: WINDOW_HEIGHT * 0.02},
-            {translateX: WINDOW_WIDTH * 0.25},
+            // {translateY: WINDOW_HEIGHT * 0.0075},
+            {translateX: WINDOW_WIDTH * 0.18},
           ],
         }}
         keyboardType="phone-pad"
@@ -81,11 +111,10 @@ export default function PhoneNumTextInput({
 const styles = StyleSheet.create({
   container: {
     width: MAIN_CARDWIDTH,
-    height: WINDOW_HEIGHT * 0.09,
+    height: WINDOW_HEIGHT * 0.07,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: AppColors.primary,
     alignItems: 'flex-start',
-    marginBottom: WINDOW_HEIGHT * 0.03,
+    marginVertical: 12,
   },
 });

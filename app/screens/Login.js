@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import SafeView from '../components/SafeView';
-import {LOGO} from '../assets';
+import {LOGO, REVEAL_LOGO} from '../assets';
 import MediumText from '../components/MediumText';
 import {AppStrings} from '../utilities/AppStrings';
 import {
@@ -26,11 +26,12 @@ import AppContext from '../utilities/AppContext';
 import {postData} from '../utilities/ApiCalls';
 import Toast from 'react-native-toast-message';
 import {APP_URL} from '../utilities/AppUrls';
-import {CountryPicker} from 'react-native-country-codes-picker';
-import { AppFonts } from '../utilities/Globals';
+import {CountryPicker, CountryButton} from 'react-native-country-codes-picker';
+import {AppFonts} from '../utilities/Globals';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login(props) {
-  const {UserData} = useContext(AppContext);
+  const {UserData, setDeviceId} = useContext(AppContext);
   const [phoneNumber, setPhoneNumber] = useState();
   const [password, setPassword] = useState('');
   const [countryCode, setcountryCode] = useState('PK');
@@ -39,6 +40,19 @@ export default function Login(props) {
   const [showPicker, setshowPicker] = useState(false);
   const [flag, setflag] = useState('🇬🇧');
   const [loading, setloading] = useState(false);
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@deviceID');
+      console.log('value', value);
+      if (value !== null) {
+        setDeviceId(value);
+        console.log('value', value);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   const ToasterSuccess = (text1, text2) => {
     Toast.show({
@@ -75,17 +89,16 @@ export default function Login(props) {
     };
     postData(APP_URL.login, payload)
       .then(res => {
+        console.log('res', res);
         if (res.error) {
           if (res.error.includes('is not a valid phone number')) {
             ToasterError('Error', 'Invalid Phone Number!');
             setloading(false);
             return;
-          }
-          else if(res.error.includes('Invalid password')){
+          } else if (res.error.includes('Invalid password')) {
             ToasterError('Error', 'Invalid Secretkey!');
-            setloading(false)
-          }
-          else {
+            setloading(false);
+          } else {
             ToasterError('Error', 'Something Went Wrong!');
             setloading(false);
             return;
@@ -96,26 +109,31 @@ export default function Login(props) {
           props.navigation.navigate('Verification', {
             PhoneNumber: phoneNumber,
             phoneCode: phoneCode,
+            screen: 'login',
           });
         }
-        setloading(false)
+        setloading(false);
       })
       .catch(error => {
-        ToasterError('Error', 'Something went wrong!');
+        ToasterError('Error', 'Something Went Wrong!');
         setloading(false);
       });
   };
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <SafeView customStyle={{backgroundColor: 'white'}}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageContainer}>
           <Image
-            source={LOGO}
+            source={REVEAL_LOGO}
             style={{
-              width: WINDOW_HEIGHT * 0.12,
-              height: WINDOW_HEIGHT * 0.12,
-              marginTop: WINDOW_HEIGHT * 0.03,
+              width: WINDOW_HEIGHT * 0.09,
+              height: WINDOW_HEIGHT * 0.09,
+              marginTop: WINDOW_HEIGHT * 0.02,
+              resizeMode:'contain'
             }}
           />
         </View>
@@ -148,7 +166,7 @@ export default function Login(props) {
           onPress={() => handleLogin()}
           loading={loading}
         />
-        <PrimaryText
+        {/* <PrimaryText
           customStyles={styles.text}
           text={AppStrings.loginOptions}
         />
@@ -158,20 +176,21 @@ export default function Login(props) {
             customStyle={{marginRight: WINDOW_HEIGHT * 0.03}}
           />
           <SocialButtons />
-        </View>
-        <View style={{flexDirection: 'row', marginTop: WINDOW_HEIGHT * 0.03}}>
+        </View> */}
+        <View style={{flexDirection: 'row', marginTop: WINDOW_HEIGHT * 0.17}}>
           <PrimaryText
             text={AppStrings.noAccout}
             customStyles={{color: AppColors.black, marginRight: 5}}
           />
           <TouchableOpacity onPress={() => props.navigation.navigate('SignUp')}>
             <PrimaryText
-              text={AppStrings.signUp}
+              text={AppStrings.signUpHere}
               customStyles={{color: AppColors.primary}}
             />
           </TouchableOpacity>
         </View>
         <CountryPicker
+          onBackdropPress={()=>setshowPicker(false)}
           show={showPicker}
           pickerButtonOnPress={item => {
             console.log('item', item);
@@ -201,13 +220,13 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
   },
   imageContainer: {
-    height: WINDOW_HEIGHT * 0.15,
-    width: WINDOW_HEIGHT * 0.15,
+    height: WINDOW_HEIGHT * 0.1,
+    width: WINDOW_HEIGHT * 0.1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#D0F5FC',
-    borderRadius: (WINDOW_HEIGHT * 0.15) / 2,
-    marginTop: WINDOW_HEIGHT * 0.02,
+    // backgroundColor: '#D0F5FC',
+    borderRadius: (WINDOW_HEIGHT * 0.1) / 2,
+    marginTop: WINDOW_HEIGHT * 0.1,
   },
   welcomeText: {
     fontSize: FontSize.big,
@@ -222,7 +241,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     marginTop: 5,
-    color: AppColors.primary,
+    color: AppColors.darkBlue,
     fontSize: FontSize.small,
   },
 });

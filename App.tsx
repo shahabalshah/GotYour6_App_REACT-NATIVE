@@ -10,8 +10,9 @@ import BoldText from './app/components/BoldText';
 import {AppColors, MAIN_CARDWIDTH} from './app/utilities/Globals';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+Mapbox.setWellKnownTileServer('Mapbox')
 Mapbox.setAccessToken(
-  'pk.eyJ1IjoibXVqdGFiYXhhaWRpIiwiYSI6ImNsaWE5MnJrdjAxZWszY3AzNjc3N2ZoNjMifQ.RdtF2h6lsWLJ6VF534jSsA',
+  'pk.eyJ1IjoibXVqdGFiYXhhaWRpIiwiYSI6ImNsamM0dmRpNTB1YzczcXFoejk4bzBqNHgifQ.Q5yGuuwq0Q6ebq5-ljNRrA',
 );
 
 const toastConfig = {

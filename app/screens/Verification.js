@@ -26,10 +26,11 @@ import OTPTextInput from 'react-native-otp-textinput';
 import Toast from 'react-native-toast-message';
 import {postData} from '../utilities/ApiCalls';
 import AppContext from '../utilities/AppContext';
+import { APP_URL } from '../utilities/AppUrls';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Verification(props) {
-  console.log('props', props);
-  const {setUserData} = useContext(AppContext);
+  const {setUserData,DeviceId} = useContext(AppContext);
   const [loading, setloading] = useState(false);
   const [otp, setOtp] = useState('');
   let otpInput = useRef(null);
@@ -37,11 +38,19 @@ export default function Verification(props) {
   const clearText = () => {
     otpInput.current.clear();
   };
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('my-key', jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  };
 
   useEffect(() => {
-    return () => {
-      clearText()
-    };
+    // return () => {
+    //   clearText()
+    // };
   }, []);
 
   const onVerify = async () => {
@@ -55,7 +64,7 @@ export default function Verification(props) {
       return;
     }
     setloading(true);
-    postData('/otpVerify', {otp: otp})
+    postData(APP_URL.verifyOtp, {otp: otp})
       .then(res => {
         console.log('response after otp', res);
         if (res.error) {
@@ -76,7 +85,15 @@ export default function Verification(props) {
           setloading(false);
           if (props?.route?.params?.screen == 'forgot') {
             props.navigation.replace('ResetKey', {otp: otp});
-          } else {
+          }
+          else if(props?.route?.params?.screen == 'login'){
+            if(DeviceId==null){
+            props.navigation.navigate('ConnectWatch')
+          }else{
+            props.navigation.navigate('BottomTabsHandler')
+          }
+          }
+          else {
             props.navigation.navigate('ConnectWatch');
           }
         }
@@ -96,7 +113,7 @@ export default function Verification(props) {
     <SafeView>
       <View style={styles.container}>
         <Header
-          title={"Verify It's You"}
+          title={"Verification"}
           onBackPress={() => props.navigation.goBack()}
         />
         <View style={styles.iconContainer}>
@@ -105,9 +122,9 @@ export default function Verification(props) {
             style={{height: 40, width: 40, resizeMode: 'contain'}}
           />
         </View>
-        <View style={{width: MAIN_CARDWIDTH, flexDirection: 'row'}}>
+        <View style={{width: WINDOW_WIDTH, flexDirection: 'column'}}>
           <Text style={styles.text}>
-            We have sent the verification code to your phone number
+            Verification code sent to{'\n'}
             <Text style={styles.textMobileNum}>
               {' '}
               {props?.route?.params?.phoneCode}
@@ -129,15 +146,17 @@ export default function Verification(props) {
             handleTextChange={val => setOtp(val)}
           />
         </View>
-        <PrimaryButton
-          text={AppStrings.verify.toLocaleUpperCase()}
-          onPress={() => onVerify()}
-          loading={loading}
-        />
-        <PrimaryText text={AppStrings.didntGotCode} />
+        
+        <PrimaryText text={AppStrings.didntGotCode} customStyles={{marginTop:24}}/>
         <MediumText
           text={AppStrings.resendAgain.toLocaleUpperCase()}
           customStyles={styles.resend}
+        />
+        <PrimaryButton
+          text={'Continue'}
+          onPress={() => onVerify()}
+          loading={loading}
+          customStyles={{marginTop:WINDOW_HEIGHT*0.15}}
         />
       </View>
     </SafeView>
@@ -154,7 +173,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     height: WINDOW_WIDTH * 0.25,
     width: WINDOW_WIDTH * 0.25,
-    borderRadius: 10,
+    borderRadius:  WINDOW_WIDTH * 0.25/2,
     backgroundColor: AppColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -174,7 +193,8 @@ const styles = StyleSheet.create({
   notYou: {
     color: AppColors.primary,
     fontFamily: AppFonts.medium,
-    marginVertical: WINDOW_HEIGHT * 0.05,
+    marginBottom: WINDOW_HEIGHT * 0.05,
+    marginTop:WINDOW_HEIGHT * 0.02
   },
   resend: {
     color: AppColors.primary,

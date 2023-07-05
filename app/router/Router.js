@@ -21,7 +21,7 @@ import GadgetDetails from '../screens/GadgetDetails';
 import Loading from '../screens/Loading';
 import ForgotPassword from '../screens/ForgotPassword';
 import ResetKey from '../screens/ResetKey';
-
+import AddGadgetDetails from '../screens/AddGadgetDetails';
 const AuthNavigationStack = createNativeStackNavigator();
 const AuthNavigationHandler = () => {
   return (
@@ -45,6 +45,7 @@ const AuthNavigationHandler = () => {
       <AuthNavigationStack.Screen component={Packages} name="Packages" />
       <AuthNavigationStack.Screen component={ForgotPassword} name='ForgotPassword'/>
       <AuthNavigationStack.Screen component={ResetKey} name='ResetKey'/>
+      <AuthNavigationStack.Screen component={AddGadgetDetails} name="AddGadgetDetails"/>
     </AuthNavigationStack.Navigator>
   );
 };
@@ -213,6 +214,7 @@ const MainNavigationStackHandler = () => {
         name="BottomTabsHandler"
       />
       <MainNavigationStack.Screen component={GadgetDetails} name="GadgetDetails"/>
+      <MainNavigationStack.Screen component={ScanWatch} name="ScanWatch"/>
     </MainNavigationStack.Navigator>
   );
 };

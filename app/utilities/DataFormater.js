@@ -21,7 +21,7 @@ if (success) {
   const speed = responseParts[9];
   const course = responseParts[10];
   const satellites = responseParts[11];
-  const imei = responseParts[13];
+  const batteryLevel = responseParts[13];
   const operator = responseParts[14];
   const mcc = responseParts[15];
   const mnc = responseParts[16];
@@ -42,7 +42,7 @@ if (success) {
     speed,
     course,
     satellites,
-    imei,
+    batteryLevel,
     operator,
     mcc,
     mnc,
@@ -50,7 +50,7 @@ if (success) {
     cid,
     rssi,
   };
-  return {coordinates:[longitude,latitude],status:'success',direction:direction}
+  return {coordinates:[longitude,latitude],status:'success',direction:direction,batteryLevel:batteryLevel}
 } else {
   const networkType = responseParts[1];
   const timestamp = responseParts[2];
@@ -63,6 +63,7 @@ if (success) {
   const speed = responseParts[10];
   const course = responseParts[11];
   const satellites = responseParts[12];
+  const batteryLevel = responseParts[13];
   const imei = responseParts[14];
   const operator = responseParts[15];
   const mcc = responseParts[16];
@@ -83,6 +84,7 @@ if (success) {
     latitude,
     longitude,
     altitude,
+    batteryLevel,
     speed,
     course,
     satellites,
@@ -94,7 +96,7 @@ if (success) {
     cid,
     rssi,
   };
-  return {coordinates:[0,0],status:'fail'}
+  return {coordinates:[0,0],status:'fail',batteryLevel:batteryLevel}
 }
 
 }

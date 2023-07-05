@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Image, View, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import SafeView from '../components/SafeView';
 import Header from '../components/Header';
@@ -10,6 +10,8 @@ import PrimaryButton from '../components/PrimaryButton';
 import Toast from 'react-native-toast-message';
 import {postData} from '../utilities/ApiCalls';
 import Clipboard from '@react-native-clipboard/clipboard';
+import LinearGradient from 'react-native-linear-gradient';
+import { LOCK } from '../assets';
 
 export default function ResetKey(props) {
   const [secretKey, setsecretKey] = useState('');
@@ -74,7 +76,7 @@ export default function ResetKey(props) {
     };
     setloading(true);
     console.log('payload', payload);
-    postData('/resetPassword/otp', payload)
+    postData('mobile/resetPassword/otp', payload)
       .then(res => {
         if (res.success) {
           Toast.show({
@@ -111,39 +113,51 @@ export default function ResetKey(props) {
       <View style={styles.container}>
         <Header
           onBackPress={() => props.navigation.goBack()}
-          title={'New SafeKey'}
+          title={'New CryptoKey'}
         />
         <View style={styles.lockcontainer}>
-          <Icon name="lock-alert-outline" size={30} color={AppColors.primary} />
+          {/* <Icon name="lock-alert-outline" size={30} color={AppColors.primary} /> */}
+          <Image
+          source={LOCK}
+          style={{
+            width: WINDOW_HEIGHT * 0.07,
+            height: WINDOW_HEIGHT * 0.07,
+            resizeMode:'contain'
+          }}
+          />
         </View>
         <PrimaryText
           text={
-            'Generate a new SafeKey below.'
+            'Generate a new CrytoKey'
           }
           customStyles={styles.text}
         />
         <TouchableOpacity
           onPress={() => generateSafekey(27)}
-          style={styles.safekeybutton}>
-          <Icon name="key-variant" size={12} color={AppColors.darkgray} />
+          >
+            <LinearGradient style={styles.safekeybutton} colors={['#0EE1F4', '#00004D']}>
+          <Icon name="key-variant" size={12} color={AppColors.white} />
           <PrimaryText
-            customStyles={{color: AppColors.darkgray}}
-            text={'Generate Safekey'}
+            customStyles={{color: AppColors.white}}
+            text={'Generate CryptoKey'}
           />
+          </LinearGradient>
         </TouchableOpacity>
         <SecondaryInput
-          text={'Generate Safekey'}
+          text={'Generate CryptoKey'}
           editable={false}
           onPressCopy={() => {
             copyToClipboard();
           }}
           value={secretKey}
         />
+        <View style={{marginTop:WINDOW_HEIGHT*0.275}}>
         <PrimaryButton
-          text={'CONTINUE'}
+          text={'Continue'}
           onPress={() => handleChangeKey()}
           loading={loading}
         />
+        </View>
       </View>
     </SafeView>
   );
@@ -156,22 +170,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: AppColors.gray,
+    color: AppColors.black,
     textAlign: 'center',
     marginBottom: 15,
   },
   lockcontainer: {
-    width: WINDOW_WIDTH * 0.22,
-    height: WINDOW_WIDTH * 0.22,
-    borderRadius: (WINDOW_WIDTH * 0.22) / 2,
+    width: WINDOW_WIDTH * 0.275,
+    height: WINDOW_WIDTH * 0.275,
+    borderRadius: (WINDOW_WIDTH * 0.275) / 2,
     backgroundColor: AppColors.secondary,
     marginVertical: WINDOW_HEIGHT * 0.05,
     alignItems: 'center',
     justifyContent: 'center',
   },
   safekeybutton: {
-    marginBottom: 20,
-    backgroundColor: AppColors.gray,
+    marginVertical: 12,
+    backgroundColor: AppColors.primary,
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 5,

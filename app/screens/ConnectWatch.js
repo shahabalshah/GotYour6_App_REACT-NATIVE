@@ -20,7 +20,7 @@ export default function ConnectWatch(props) {
         style={styles.watchContainer}
         />
         <PrimaryButton
-        text={AppStrings.connect.toLocaleUpperCase()}
+        text={'Continue'}
         onPress={()=>props.navigation.navigate('ScanWatch')}
         />
     </View>

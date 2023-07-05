@@ -4,17 +4,17 @@ import {AppColors, WINDOW_HEIGHT, WINDOW_WIDTH} from '../utilities/Globals';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MediumText from './MediumText';
 
-export default function Header({title, onBackPress}) {
+export default function Header({title, onBackPress,customTextStyles,iconColor,customStyles}) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,customStyles]}>
       <TouchableOpacity style={styles.icon} onPress={onBackPress}>
         <MaterialIcons
-        color={AppColors.black}
+        color={iconColor ? iconColor : AppColors.black}
         name='arrow-back-ios'
         size={18}
         />
       </TouchableOpacity>
-      <MediumText text={title} customStyles={{color:AppColors.black}}/>
+      <MediumText text={title} customStyles={[{color:AppColors.black},customTextStyles]}/>
     </View>
   );
 }

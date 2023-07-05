@@ -28,7 +28,7 @@ export default function PrimaryButton({
       <LinearGradient
         colors={[
           topGradientColor ? topGradientColor : '#0EE1F4',
-          bottomGradientColor ? bottomGradientColor : '#27AAE1',
+          bottomGradientColor ? bottomGradientColor : '#00004D',
         ]}
         style={[styles.linearGradient, customStyles]}>
         <PrimaryText

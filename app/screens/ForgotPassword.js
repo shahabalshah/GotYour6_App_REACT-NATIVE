@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Image, View} from 'react-native';
 import React, {useState} from 'react';
 import SafeView from '../components/SafeView';
 import {
@@ -16,6 +16,8 @@ import PrimaryButton from '../components/PrimaryButton';
 import Toast from 'react-native-toast-message';
 import {postData} from '../utilities/ApiCalls';
 import {CountryPicker} from 'react-native-country-codes-picker';
+import {APP_URL} from '../utilities/AppUrls';
+import {LOCK} from '../assets';
 
 export default function ForgotPassword(props) {
   const [PhoneCode, setphoneCode] = useState('+44');
@@ -52,7 +54,7 @@ export default function ForgotPassword(props) {
       return;
     }
 
-    postData('/forgotPassword/otp', {phonenumber: PhoneNumber})
+    postData(APP_URL.forgotSafeKey, {phonenumber: PhoneNumber})
       .then(res => {
         console.log('res', res);
         if (res.message && res.success == false) {
@@ -89,15 +91,21 @@ export default function ForgotPassword(props) {
       <View style={styles.container}>
         <Header
           onBackPress={() => props.navigation.goBack()}
-          title={'Forgot Safekey'}
+          title={'Forgot CryptoKey'}
         />
         <View style={styles.lockcontainer}>
-          <Icon name="lock-alert-outline" size={30} color={AppColors.primary} />
+          {/* <Icon name="lock-alert-outline" size={30} color={AppColors.primary} /> */}
+          <Image
+            source={LOCK}
+            style={{
+              width: WINDOW_HEIGHT * 0.07,
+              height: WINDOW_HEIGHT * 0.07,
+              resizeMode: 'contain',
+            }}
+          />
         </View>
         <PrimaryText
-          text={
-            'Enter your Phone Number to receive OTP\ncode to reset your SafeKey.'
-          }
+          text={'Enter your Phone Number to receive OTP'}
           customStyles={styles.text}
         />
         <PhoneNumTextInput
@@ -107,14 +115,17 @@ export default function ForgotPassword(props) {
           phoneCode={PhoneCode}
           customStyles={{marginBottom: 0}}
         />
-        <PrimaryButton
-          loading={loading}
-          text={'Send OTP'}
-          onPress={() => {
-            requestOTP();
-          }}
-        />
+        <View style={{marginTop: WINDOW_HEIGHT * 0.35}}>
+          <PrimaryButton
+            loading={loading}
+            text={'Send OTP'}
+            onPress={() => {
+              requestOTP();
+            }}
+          />
+        </View>
         <CountryPicker
+          onBackdropPress={() => setshowPicker(false)}
           show={showPicker}
           pickerButtonOnPress={item => {
             setphoneCode(item.dial_code);
@@ -144,16 +155,16 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
   },
   lockcontainer: {
-    width: WINDOW_WIDTH * 0.22,
-    height: WINDOW_WIDTH * 0.22,
-    borderRadius: (WINDOW_WIDTH * 0.22) / 2,
+    width: WINDOW_WIDTH * 0.275,
+    height: WINDOW_WIDTH * 0.275,
+    borderRadius: (WINDOW_WIDTH * 0.275) / 2,
     backgroundColor: AppColors.secondary,
     marginVertical: WINDOW_HEIGHT * 0.05,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    color: AppColors.darkgray,
+    color: AppColors.black,
     textAlign: 'center',
     marginBottom: 15,
   },
