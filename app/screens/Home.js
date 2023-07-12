@@ -60,7 +60,7 @@ import MapComp from '../components/MapComp';
 import MapCompSatellite from '../components/MapCompSatellite';
 import NewDetailsBubble from '../components/NewDetailsBubble';
 
-Geocoder.init('AIzaSyAx7FCcvU1-w3vTvfTj6hokgqs_0LF3P54');
+Geocoder.init('ADD_YOUR_API_KEY');
 
 const connectionData = '[3G*7703762021*0009*LK,0,0,77]';
 
